@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>周末漫步 · 上海小记</title>
+<style>
+  :root{
+    --paper:#e9e4d9;      /* 旧纸暖灰白 */
+    --ink:#2b2b2b;        /* 墨色 */
+    --stamp:#b23a3a;      /* 朱砂红 */
+    --moss:#3d5a4a;       /* 墨绿 */
+    --cream:#f5f1e8;      /* 卡片底 */
+    --soft:#7a7468;       /* 次要文字 */
+    --line:#cfc7b6;       /* 分割线 */
+    --shadow:0 6px 22px rgba(60,40,20,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"PingFang SC","Microsoft YaHei","Noto Serif SC",serif;
+    color:var(--ink);
+    line-height:1.85;
+    background-color:var(--paper);
+    background-image:
+      radial-gradient(circle at 12% 18%, rgba(178,58,58,.05) 0 1px, transparent 2px),
+      radial-gradient(circle at 78% 64%, rgba(61,90,74,.06) 0 1px, transparent 2px),
+      linear-gradient(180deg, rgba(255,255,255,.4), rgba(0,0,0,.03));
+    background-size:34px 34px, 40px 40px, auto;
+    -webkit-font-smoothing:antialiased;
+  }
+  .sheet{
+    max-width:880px;margin:0 auto;padding:64px 28px 96px;
+  }
+
+  /* 信件抬头 */
+  header.letterhead{
+    border-bottom:2px solid var(--ink);
+    padding-bottom:28px;margin-bottom:48px;
+    display:flex;flex-wrap:wrap;gap:24px;align-items:flex-end;justify-content:space-between;
+  }
+  .from-to{font-size:13px;color:var(--soft);letter-spacing:.04em}
+  .from-to b{display:block;color:var(--ink);font-size:15px;font-weight:600;margin-top:2px}
+  h1{
+    font-family:"KaiTi","STKaiti","Kaiti SC",cursive;
+    font-weight:400;font-size:clamp(34px,7vw,58px);
+    letter-spacing:.04em;line-height:1.05;
+  }
+  .subtitle{margin-top:10px;color:var(--moss);font-size:15px;letter-spacing:.12em}
+  .date-range{font-size:13px;color:var(--soft);text-align:right;font-variant-numeric:tabular-nums}
+
+  /* 引言 */
+  .intro{
+    font-size:17px;color:#3a3a3a;border-left:3px solid var(--stamp);
+    padding:6px 0 6px 20px;margin-bottom:56px;max-width:680px;
+  }
+
+  /* 时间线 */
+  .timeline{position:relative;padding-left:38px}
+  .timeline::before{
+    content:"";position:absolute;left:14px;top:8px;bottom:8px;width:2px;
+    background:repeating-linear-gradient(var(--line) 0 6px,transparent 6px 12px);
+  }
+  .entry{position:relative;margin-bottom:64px;opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+  .entry.show{opacity:1;transform:none}
+  .entry::before{
+    content:"";position:absolute;left:-31px;top:24px;width:12px;height:12px;border-radius:50%;
+    background:var(--paper);border:2px solid var(--moss);
+  }
+
+  /* 拍立得卡片 */
+  .polaroid{
+    background:var(--cream);border-radius:4px;padding:14px 14px 18px;
+    box-shadow:var(--shadow);max-width:420px;position:relative;
+    transform:rotate(var(--tilt,0deg));transition:transform .4s ease,box-shadow .4s ease;
+  }
+  .polaroid:hover{transform:rotate(0deg) translateY(-4px);box-shadow:0 14px 34px rgba(60,40,20,.16)}
+  .polaroid:nth-child(odd){--tilt:-1.4deg}
+  .polaroid:nth-child(even){--tilt:1.6deg}
+  .photo{
+    aspect-ratio:4/3;border-radius:2px;margin-bottom:14px;position:relative;overflow:hidden;
+    background:#2b2b2b;
+  }
+  .photo::after{
+    content:"";position:absolute;inset:0;
+    background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.18),transparent 60%),
+      linear-gradient(180deg,transparent 60%,rgba(0,0,0,.25));
+  }
+  .ph1{background:linear-gradient(160deg,#cfd9d6,#7e9a8f 40%,#3d5a4a)}      /* 外滩清晨 */
+  .ph2{background:linear-gradient(165deg,#d9c9a3,#9c8a5e 50%,#5a4a2e)}      /* 梧桐 */
+  .ph3{background:linear-gradient(155deg,#e8dccb,#b08a5a 55%,#6b4a2a)}     /* 咖啡 */
+  .ph4{background:linear-gradient(170deg,#3a3144,#7a2a4a 45%,#b23a3a)}     /* 夜霓虹 */
+  .caption{
+    font-family:"KaiTi","STKaiti",cursive;font-size:16px;text-align:center;
+    color:#4a463c;letter-spacing:.02em;
+  }
+
+  /* 朱砂邮戳 */
+  .stamp{
+    position:absolute;top:-18px;right:-14px;width:62px;height:62px;border-radius:50%;
+    border:2px solid var(--stamp);color:var(--stamp);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    font-size:11px;line-height:1.15;letter-spacing:.05em;
+    transform:rotate(12deg);background:rgba(245,241,232,.7);
+    box-shadow:inset 0 0 0 4px rgba(178,58,58,.12);
+  }
+  .stamp b{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+  .stamp small{font-size:9px;opacity:.85;margin-top:1px}
+
+  .entry-text{margin-top:20px;max-width:560px}
+  .entry-title{font-size:21px;font-weight:600;margin-bottom:8px;color:var(--ink)}
+  .entry-title em{color:var(--stamp);font-style:normal;font-size:15px;margin-left:8px;font-weight:500;letter-spacing:.06em}
+  .entry-text p{font-size:15.5px;color:#3a3a3a}
+
+  /* 落款 */
+  .signoff{
+    margin-top:24px;border-top:1px solid var(--line);padding-top:32px;
+    display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px;
+    font-size:14px;color:var(--soft);
+  }
+  .signature{font-family:"KaiTi","STKaiti",cursive;font-size:22px;color:var(--ink)}
+
+  footer{
+    text-align:center;color:var(--soft);font-size:12.5px;margin-top:72px;letter-spacing:.06em;
+  }
+  footer a{color:var(--moss);text-decoration:none;border-bottom:1px solid var(--moss)}
+
+  @media (max-width:560px){
+    .sheet{padding:40px 18px 64px}
+    header.letterhead{flex-direction:column;align-items:flex-start}
+    .date-range{text-align:left}
+    .timeline{padding-left:26px}
+    .polaroid{max-width:100%}
+    .stamp{right:6px;top:-14px;width:54px;height:54px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .entry{opacity:1;transform:none;transition:none}
+    .polaroid{transition:none}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+  <main class="sheet">
+    <header class="letterhead">
+      <div>
+        <div class="from-to">寄自<b>上海 · 沿江一路</b></div>
+        <h1>周末漫步小记</h1>
+        <div class="subtitle">一次漫无目的的城市散步</div>
+      </div>
+      <div class="date-range">2026.09.05 — 09.06<br>晴转多云</div>
+    </header>
+
+    <p class="intro">
+      把一个周末留给双脚，而不是行程表。从外滩的晨光走到武康路的梧桐，再在街角的咖啡店停一会儿。城市在白天和夜晚是两张面孔，我都想见见。
+    </p>
+
+    <div class="timeline">
+
+      <article class="entry">
+        <div class="polaroid">
+          <div class="stamp"><b>06</b><small>SAT</small>09:00</div>
+          <div class="photo ph1"></div>
+          <div class="caption">外滩的清晨</div>
+        </div>
+        <div class="entry-text">
+          <h3 class="entry-title">江风与晨光 <em>外滩</em></h3>
+          <p>九点的江风还带着凉意，浦江两岸像一张还没完全显影的胶片。观光客还没涌来，只有跑步的人和遛狗的老人。我靠在栏杆上，看一艘货船缓缓驶过，汽笛声闷闷地荡开。</p>
+        </div>
+      </article>
+
+      <article class="entry">
+        <div class="polaroid">
+          <div class="stamp"><b>06</b><small>SAT</small>14:20</div>
+          <div class="photo ph2"></div>
+          <div class="caption">武康路的梧桐</div>
+        </div>
+        <div class="entry-text">
+          <h3 class="entry-title">梧桐漏下的光 <em>武康路</em></h3>
+          <p>午后阳光被梧桐叶筛成碎金，落在老洋房的红砖墙上。武康大楼像个沉稳的老人，立在街角不说话。我在一家旧书店翻了半小时书，什么也没买，老板也不催。</p>
+        </div>
+      </article>
+
+      <article class="entry">
+        <div class="polaroid">
+          <div class="stamp"><b>06</b><small>SAT</small>16:50</div>
+          <div class="photo ph3"></div>
+          <div class="caption">街角的咖啡店</div>
+        </div>
+        <div class="entry-text">
+          <h3 class="entry-title">一杯慢慢喝 <em>永康路</em></h3>
+          <p>拐进永康路，挑了家窗边有阳光的店。手冲的味道比记忆里更干净。窗外来来往往的人，像一部没有配乐的短片。我喜欢这种不必和谁说话的下午。</p>
+        </div>
+      </article>
+
+      <article class="entry">
+        <div class="polaroid">
+          <div class="stamp"><b>06</b><small>SAT</small>20:30</div>
+          <div class="photo ph4"></div>
+          <div class="caption">夜色霓虹</div>
+        </div>
+        <div class="entry-text">
+          <h3 class="entry-title">霓虹的另一张脸 <em>夜·街区</em></h3>
+          <p>天黑后城市才真正醒来。招牌的霓虹把潮湿的路面染成彩色，烧烤摊的烟火气混着不知哪家的爵士乐。我买了瓶汽水，靠在墙上，看了一会儿这座城市的夜班。</p>
+        </div>
+      </article>
+
+    </div>
+
+    <div class="signoff">
+      <div>
+        寄自 上海<br>
+        <span class="signature">—— 行走的人</span>
+      </div>
+      <div style="text-align:right">
+        收件人 未来的自己<br>
+        <span style="color:var(--stamp)">盖</span> 邮戳·已寄出
+      </div>
+    </div>
+
+    <footer>
+      周末漫步小记 · 由 <a href="https://pages.github.com" target="_blank" rel="noopener">GitHub Pages</a> 寄出
+    </footer>
+  </main>
+
+<script>
+  if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    const io=new IntersectionObserver((es)=>{
+      es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('show');io.unobserve(e.target)}});
+    },{threshold:.15});
+    document.querySelectorAll('.entry').forEach(el=>io.observe(el));
+  }else{
+    document.querySelectorAll('.entry').forEach(el=>el.classList.add('show'));
+  }
+</script>
+</body>
+</html>
